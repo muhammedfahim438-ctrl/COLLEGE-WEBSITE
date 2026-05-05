@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>College Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .hero {
+            padding: 90px 0 70px;
+            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 650px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .course-card,
+        .feature-card {
+            border: none;
+            border-radius: 16px;
+            transition: 0.3s;
+        }
+
+        .course-card:hover,
+        .feature-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .gallery-img {
+            height: 250px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .icon-box {
+            font-size: 2rem;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#home">College CMS</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="container text-center">
+        <h1>College Management System</h1>
+        <p class="mx-auto mt-3">
+            A modern platform to manage students, academic activities, media content,
+            and communication between students and administration.
+        </p>
+        <a href="#courses" class="btn btn-light btn-lg mt-4 px-4">Explore Courses</a>
+    </div>
+</section>
+
+<!-- Carousel -->
+<section class="py-5">
+   <div id="carouselExample" class="carousel slide shadow rounded overflow-hidden" data-bs-ride="carousel" data-bs-interval="2500">
+
+    <div class="carousel-indicators">
+        {% for item in carousels %}
+        <button type="button"
+                data-bs-target="#carouselExample"
+                data-bs-slide-to="{{ forloop.counter0 }}"
+                class="{% if forloop.first %}active{% endif %}">
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="carousel-inner">
+        {% for item in carousels %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ item.image.url }}" class="d-block w-100" style="height: 480px; object-fit: cover;">
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+</div>
+</section>
+
+<!-- About -->
+<section id="about" class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center section-title">Why Choose Us</h2>
+
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm p-4 h-100">
+                    <div class="icon-box mb-3"><i class="bi bi-mortarboard-fill"></i></div>
+                    <h5>Quality Education</h5>
+                    <p>Professional academic programs focused on career growth and practical knowledge.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm p-4 h-100">
+                    <div class="icon-box mb-3"><i class="bi bi-people-fill"></i></div>
+                    <h5>Student Management</h5>
+                    <p>Efficient management of student data, attendance, academic records, and communication.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card feature-card shadow-sm p-4 h-100">
+                    <div class="icon-box mb-3"><i class="bi bi-laptop-fill"></i></div>
+                    <h5>Digital Platform</h5>
+                    <p>Modern web-based tools for administration, updates, and student interaction.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Courses -->
+<section id="courses" class="py-5">
+    <div class="container">
+        <h2 class="text-center section-title">Our Courses</h2>
+
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card course-card shadow-sm p-4 text-center h-100">
+                    <i class="bi bi-code-slash icon-box mb-3"></i>
+                    <h5>BCA</h5>
+                    <p>Computer applications and software development.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card course-card shadow-sm p-4 text-center h-100">
+                    <i class="bi bi-cpu-fill icon-box mb-3"></i>
+                    <h5>BSc CS</h5>
+                    <p>Programming, systems, and computing fundamentals.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card course-card shadow-sm p-4 text-center h-100">
+                    <i class="bi bi-briefcase-fill icon-box mb-3"></i>
+                    <h5>BCom</h5>
+                    <p>Business studies, accounting, and finance.</p>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card course-card shadow-sm p-4 text-center h-100">
+                    <i class="bi bi-book-fill icon-box mb-3"></i>
+                    <h5>BA English</h5>
+                    <p>Literature, communication, and language skills.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery -->
+<section id="gallery" class="py-5 bg-white">
+    <div class="container">
+        <h2 class="text-center section-title">Gallery</h2>
+
+        <div class="row g-4">
+            {% for image in images %}
+            <div class="col-md-4">
+                <img src="{{ image.image.url }}" class="gallery-img shadow-sm">
+            </div>
+            {% empty %}
+            <p class="text-center">No gallery images uploaded yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="py-5">
+    <div class="container">
+        <h2 class="text-center section-title">Contact Us</h2>
+        {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+        <form method="post" class="mx-auto bg-white shadow-sm p-4 rounded" style="max-width: 750px;">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <input type="text" name="name" class="form-control" placeholder="Your Name">
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Your Email">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <input type="text" name="subject" class="form-control" placeholder="Subject">
+            </div>
+
+            <div class="mb-3">
+                <textarea name="message" class="form-control" rows="5" placeholder="Your Message"></textarea>
+            </div>
+
+            <button class="btn btn-primary px-4">Send Message</button>
+        </form>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-4">
+    <div class="container">
+        © 2026 College Management System
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
