@@ -114,3 +114,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'muhammedfahim438@gmail.com'
 EMAIL_HOST_PASSWORD = 'pirx ejmw frzx ybdy'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

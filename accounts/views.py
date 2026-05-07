@@ -15,6 +15,7 @@ from carousel.models import Carousel
 from gallery.models import Gallery
 from website.models import Contact
 from .models import EmailOTP
+from django.views.decorators.cache import never_cache
 
 
 # ── AUTH ──────────────────────────────────────────────────────────
@@ -80,12 +81,13 @@ def admin_login(request):
 
 def admin_logout(request):
     logout(request)
+    request.session.flush()
     return redirect('admin_login')
-
 
 # ── DASHBOARD ─────────────────────────────────────────────────────
 
 @login_required(login_url='admin_login')
+@never_cache
 def dashboard(request):
     return render(request, 'accounts/dashboard.html', {
         'student_count':  Student.objects.count(),
@@ -93,7 +95,6 @@ def dashboard(request):
         'gallery_count':  Gallery.objects.count(),
         'contact_count':  Contact.objects.count(),
     })
-
 
 # ── OTP API ───────────────────────────────────────────────────────
 
