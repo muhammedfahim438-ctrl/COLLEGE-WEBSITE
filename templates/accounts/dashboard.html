@@ -1,73 +1,564 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>College Admin Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f2f5;font-family:'Segoe UI',sans-serif}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:#1a1f2e;display:flex;flex-direction:column;z-index:200}
+.sb-brand{padding:22px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-brand h5{color:#fff;font-size:16px;font-weight:600;margin:0}
+.sb-brand small{color:#8892a4;font-size:11px}
+.sb-menu{padding:14px 10px;flex:1;overflow-y:auto}
+.sb-lbl{color:#4a5568;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 10px 8px;display:block}
+.sb-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:none;background:none;color:#8892a4;font-size:14px;border-radius:8px;cursor:pointer;text-align:left;transition:all .15s;margin-bottom:2px}
+.sb-btn svg{width:16px;height:16px;flex-shrink:0}
+.sb-btn:hover{background:rgba(255,255,255,.06);color:#c8d0e0}
+.sb-btn.active{background:rgba(99,102,241,.2);color:#a5b4fc}
+.sb-foot{padding:12px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-logout{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;color:#fc8181;text-decoration:none;font-size:14px;transition:background .15s}
+.sb-logout:hover{background:rgba(252,129,129,.1);color:#fc8181}
+.sb-logout svg{width:16px;height:16px}
+
+/* MAIN */
+.main{margin-left:240px;padding:28px 30px 60px;min-height:100vh}
+.page-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.page-hd h4{font-size:21px;font-weight:700;color:#1a202c;margin:0}
+.page-hd p{color:#718096;font-size:13px;margin:3px 0 0}
+
+/* SECTION */
+.sec{display:none}.sec.active{display:block}
+
+/* STAT CARDS */
+.stat{background:#fff;border-radius:14px;padding:20px;border:1px solid #e8ecf0}
+.stat .ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat h6{font-size:11px;color:#718096;text-transform:uppercase;letter-spacing:.5px;margin:0 0 4px}
+.stat .val{font-size:28px;font-weight:700;color:#1a202c;margin:0}
+.s-pur .ico{background:#ede9fe}.s-blu .ico{background:#dbeafe}.s-grn .ico{background:#dcfce7}.s-amb .ico{background:#fef3c7}
+
+/* TABLE */
+.tbl-wrap{background:#fff;border-radius:14px;border:1px solid #e8ecf0;overflow:hidden}
+.tbl-wrap table{margin:0}
+.tbl-wrap thead th{background:#f8fafc;color:#4a5568;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:13px 15px;border-bottom:1px solid #e8ecf0;white-space:nowrap}
+.tbl-wrap tbody td{padding:12px 15px;vertical-align:middle;color:#2d3748;font-size:13.5px;border-color:#f0f4f8}
+.tbl-wrap tbody tr:last-child td{border-bottom:none}
+
+/* IMAGE CARD */
+.img-card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e8ecf0}
+.img-card img{width:100%;height:195px;object-fit:cover;display:block}
+.img-card-body{padding:13px 15px}
+.img-card-body h6{margin:0 0 10px;font-weight:600;color:#2d3748;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* BUTTONS */
+.btn-add{display:inline-flex;align-items:center;gap:6px;background:#6366f1;color:#fff;border:none;padding:9px 18px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;transition:background .15s}
+.btn-add:hover{background:#4f46e5}
+.btn-ed{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;padding:5px 11px;border-radius:7px;font-size:12px;cursor:pointer;transition:background .15s}
+.btn-ed:hover{background:#dbeafe}
+.btn-dl{background:#fff5f5;color:#e53e3e;border:1px solid #fed7d7;padding:5px 11px;border-radius:7px;font-size:12px;cursor:pointer;transition:background .15s}
+.btn-dl:hover{background:#fed7d7}
+.btn-save{width:100%;background:#6366f1;color:#fff;border:none;padding:11px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px}
+.btn-save:hover{background:#4f46e5}
+.act-btns{display:flex;gap:6px;flex-wrap:wrap}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:30px;width:100%;max-width:480px;position:relative;max-height:90vh;overflow-y:auto}
+.modal-box h5{font-weight:700;color:#1a202c;margin:0 0 20px;font-size:17px}
+.m-close{position:absolute;top:14px;right:14px;background:#f7fafc;border:none;border-radius:8px;width:30px;height:30px;font-size:15px;color:#718096;cursor:pointer;line-height:30px;text-align:center}
+.m-close:hover{background:#edf2f7}
+.flabel{display:block;font-size:13px;font-weight:500;color:#4a5568;margin-bottom:5px}
+.finput{width:100%;padding:9px 13px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:14px;color:#2d3748;outline:none;background:#f8fafc;transition:border .15s}
+.finput:focus{border-color:#6366f1;background:#fff}
+
+/* EMPTY */
+.empty-box{text-align:center;padding:48px;color:#a0aec0}
+.empty-box svg{width:44px;height:44px;margin-bottom:10px;display:block;margin-inline:auto}
+.empty-box p{font-size:14px;margin:0}
+</style>
 </head>
 <body>
 
-<div class="d-flex">
-
-    <div class="bg-dark text-white p-3" style="width: 250px; min-height: 100vh;">
-        <h4 class="mb-4">College Admin</h4>
-
-        <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-                <a href="{% url 'dashboard' %}" class="nav-link text-white">Dashboard</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="{% url 'student_list' %}" class="nav-link text-white">Students</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="{% url 'carousel_list' %}" class="nav-link text-white">Carousel</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="{% url 'gallery_list' %}" class="nav-link text-white">Gallery</a>
-            </li>
-            <li class="nav-item mb-2">
-                <a href="{% url 'contact_list' %}" class="nav-link text-white">Contacts</a>
-            </li>
-            <li class="nav-item mt-4">
-                <a href="{% url 'admin_logout' %}" class="nav-link text-danger">Logout</a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="p-4 w-100">
-        <h2 class="mb-4">Dashboard</h2>
-
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <div class="card shadow-sm p-3">
-                    <h5>Students</h5>
-                    <h2>{{ student_count }}</h2>
-                </div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-                <div class="card shadow-sm p-3">
-                    <h5>Carousel</h5>
-                    <h2>{{ carousel_count }}</h2>
-                </div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-                <div class="card shadow-sm p-3">
-                    <h5>Gallery</h5>
-                    <h2>{{ gallery_count }}</h2>
-                </div>
-            </div>
-
-            <div class="col-md-3 mb-3">
-                <div class="card shadow-sm p-3">
-                    <h5>Contacts</h5>
-                    <h2>{{ contact_count }}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-brand">
+    <h5>🎓 College Admin</h5>
+    <small>Management Portal</small>
+  </div>
+  <div class="sb-menu">
+    <span class="sb-lbl">Main Menu</span>
+    <button class="sb-btn active" onclick="showSec('dashboard',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Dashboard
+    </button>
+    <button class="sb-btn" onclick="showSec('students',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Students
+    </button>
+    <button class="sb-btn" onclick="showSec('carousel',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Carousel
+    </button>
+    <button class="sb-btn" onclick="showSec('gallery',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      Gallery
+    </button>
+    <button class="sb-btn" onclick="showSec('contacts',this)">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Contacts
+    </button>
+  </div>
+  <div class="sb-foot">
+    <a href="{% url 'admin_logout' %}" class="sb-logout">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+      Logout
+    </a>
+  </div>
 </div>
 
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div id="sec-dashboard" class="sec active">
+    <div class="page-hd"><div><h4>Dashboard</h4><p>Welcome back! Here's an overview.</p></div></div>
+    <div class="row g-3">
+      <div class="col-md-3"><div class="stat s-pur">
+        <div class="ico"><svg width="20" height="20" fill="none" stroke="#7c3aed" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+        <h6>Students</h6><p class="val" id="cnt-student">{{ student_count }}</p>
+      </div></div>
+      <div class="col-md-3"><div class="stat s-blu">
+        <div class="ico"><svg width="20" height="20" fill="none" stroke="#2563eb" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <h6>Carousel</h6><p class="val" id="cnt-carousel">{{ carousel_count }}</p>
+      </div></div>
+      <div class="col-md-3"><div class="stat s-grn">
+        <div class="ico"><svg width="20" height="20" fill="none" stroke="#16a34a" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg></div>
+        <h6>Gallery</h6><p class="val" id="cnt-gallery">{{ gallery_count }}</p>
+      </div></div>
+      <div class="col-md-3"><div class="stat s-amb">
+        <div class="ico"><svg width="20" height="20" fill="none" stroke="#d97706" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <h6>Contacts</h6><p class="val" id="cnt-contact">{{ contact_count }}</p>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- STUDENTS -->
+  <div id="sec-students" class="sec">
+    <div class="page-hd">
+      <div><h4>Students</h4><p>Add, edit and delete student records</p></div>
+      <button class="btn-add" onclick="openStudentAdd()">+ Add Student</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Course</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="tbody-students"><tr><td colspan="7" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CAROUSEL -->
+  <div id="sec-carousel" class="sec">
+    <div class="page-hd">
+      <div><h4>Carousel</h4><p>Manage homepage slider images</p></div>
+      <button class="btn-add" onclick="openCarouselAdd()">+ Add Image</button>
+    </div>
+    <div class="row g-3" id="grid-carousel">
+      <div class="col-12"><div class="empty-box"><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div id="sec-gallery" class="sec">
+    <div class="page-hd">
+      <div><h4>Gallery</h4><p>Manage gallery images</p></div>
+      <button class="btn-add" onclick="openGalleryAdd()">+ Add Image</button>
+    </div>
+    <div class="row g-3" id="grid-gallery">
+      <div class="col-12"><div class="empty-box"><p>Loading...</p></div></div>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div id="sec-contacts" class="sec">
+    <div class="page-hd"><div><h4>Contact Messages</h4><p>Messages from the website contact form</p></div></div>
+    <div class="tbl-wrap">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Subject</th><th>Message</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody id="tbody-contacts"><tr><td colspan="7" class="text-center py-4 text-muted">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ===== STUDENT MODAL ===== -->
+<div class="modal-bg" id="modal-student">
+  <div class="modal-box">
+    <button class="m-close" onclick="closeModal('modal-student')">✕</button>
+    <h5 id="student-modal-title">Add Student</h5>
+    <input type="hidden" id="student-id">
+    <div class="mb-3">
+      <label class="flabel">Full Name *</label>
+      <input class="finput" id="student-name" placeholder="Enter full name">
+    </div>
+    <div class="mb-3">
+      <label class="flabel">Email *</label>
+      <input class="finput" id="student-email" type="email" placeholder="Enter email address">
+    </div>
+    <div class="mb-3">
+      <label class="flabel">Phone *</label>
+      <input class="finput" id="student-phone" placeholder="Enter phone number">
+    </div>
+    <div class="mb-3">
+      <label class="flabel">Course *</label>
+      <input class="finput" id="student-course" placeholder="Enter course name">
+    </div>
+    <div class="mb-3">
+      <label class="flabel">Date of Joining *</label>
+      <input class="finput" id="student-doj" type="date">
+    </div>
+    <button class="btn-save" onclick="saveStudent()">Save Student</button>
+  </div>
+</div>
+
+<!-- ===== CAROUSEL MODAL ===== -->
+<div class="modal-bg" id="modal-carousel">
+  <div class="modal-box">
+    <button class="m-close" onclick="closeModal('modal-carousel')">✕</button>
+    <h5 id="carousel-modal-title">Add Carousel Image</h5>
+    <input type="hidden" id="carousel-id">
+    <div class="mb-3">
+      <label class="flabel">Title</label>
+      <input class="finput" id="carousel-title" placeholder="Enter image title (optional)">
+    </div>
+    <div class="mb-3" id="carousel-file-wrap">
+      <label class="flabel">Image File *</label>
+      <input class="finput" id="carousel-image" type="file" accept="image/*">
+    </div>
+    <button class="btn-save" onclick="saveCarousel()">Save</button>
+  </div>
+</div>
+
+<!-- ===== GALLERY MODAL ===== -->
+<div class="modal-bg" id="modal-gallery">
+  <div class="modal-box">
+    <button class="m-close" onclick="closeModal('modal-gallery')">✕</button>
+    <h5 id="gallery-modal-title">Add Gallery Image</h5>
+    <input type="hidden" id="gallery-id">
+    <div class="mb-3">
+      <label class="flabel">Title</label>
+      <input class="finput" id="gallery-title" placeholder="Enter image title (optional)">
+    </div>
+    <div class="mb-3" id="gallery-file-wrap">
+      <label class="flabel">Image File *</label>
+      <input class="finput" id="gallery-image" type="file" accept="image/*">
+    </div>
+    <button class="btn-save" onclick="saveGallery()">Save</button>
+  </div>
+</div>
+
+<script>
+// ── HELPERS ───────────────────────────────────────────────────────
+function gel(id){ return document.getElementById(id); }
+function setHTML(id, html){ const e=gel(id); if(e) e.innerHTML=html; }
+function csrf(){ return document.cookie.match(/csrftoken=([^;]+)/)?.[1]||''; }
+
+function openModal(id){ gel(id).classList.add('open'); }
+function closeModal(id){ gel(id).classList.remove('open'); }
+
+// close on backdrop click
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+function showSec(id, btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b=>b.classList.remove('active'));
+  gel('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function postJSON(url, data){
+  return fetch(url,{method:'POST',headers:{'X-CSRFToken':csrf(),'Content-Type':'application/json'},body:JSON.stringify(data)});
+}
+function postForm(url, fd){
+  return fetch(url,{method:'POST',headers:{'X-CSRFToken':csrf()},body:fd});
+}
+
+function emptyState(msg){
+  return `<div class="col-12"><div class="empty-box">
+    <svg fill="none" stroke="#cbd5e0" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01"/></svg>
+    <p>${msg}</p></div></div>`;
+}
+
+// ── COUNTS ────────────────────────────────────────────────────────
+function loadCounts(){
+  fetch("{% url 'dashboard_counts' %}").then(r=>r.json()).then(d=>{
+    gel('cnt-student').textContent  = d.student_count;
+    gel('cnt-carousel').textContent = d.carousel_count;
+    gel('cnt-gallery').textContent  = d.gallery_count;
+    gel('cnt-contact').textContent  = d.contact_count;
+  });
+}
+
+// ── STUDENTS ──────────────────────────────────────────────────────
+function loadStudents(){
+  fetch("{% url 'student_list_json' %}").then(r=>r.json()).then(d=>{
+    if(!d.students.length){
+      setHTML('tbody-students','<tr><td colspan="7" class="text-center py-4 text-muted">No students found.</td></tr>');
+      return;
+    }
+    setHTML('tbody-students', d.students.map((s,i)=>`
+      <tr id="str-${s.id}">
+        <td>${i+1}</td>
+        <td><strong>${s.name}</strong></td>
+        <td>${s.email}</td>
+        <td>${s.phone||'—'}</td>
+        <td>${s.course||'—'}</td>
+        <td>${s.date_of_joining||'—'}</td>
+        <td><div class="act-btns">
+          <button class="btn-ed" onclick="openStudentEdit(${s.id},'${esc(s.name)}','${esc(s.email)}','${esc(s.phone)}','${esc(s.course)}','${s.date_of_joining}')">Edit</button>
+          <button class="btn-dl" onclick="deleteStudent(${s.id})">Delete</button>
+        </div></td>
+      </tr>`).join(''));
+  }).catch(()=>setHTML('tbody-students','<tr><td colspan="7" class="text-center py-4 text-danger">Failed to load students.</td></tr>'));
+}
+
+function esc(v){ return (v||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+function openStudentAdd(){
+  gel('student-modal-title').textContent='Add Student';
+  gel('student-id').value='';
+  gel('student-name').value='';
+  gel('student-email').value='';
+  gel('student-phone').value='';
+  gel('student-course').value='';
+  gel('student-doj').value='';
+  openModal('modal-student');
+}
+
+function openStudentEdit(id,name,email,phone,course,doj){
+  gel('student-modal-title').textContent='Edit Student';
+  gel('student-id').value=id;
+  gel('student-name').value=name;
+  gel('student-email').value=email;
+  gel('student-phone').value=phone;
+  gel('student-course').value=course;
+  gel('student-doj').value=doj;
+  openModal('modal-student');
+}
+
+function saveStudent(){
+  const id=gel('student-id').value;
+  const body={
+    name:    gel('student-name').value.trim(),
+    email:   gel('student-email').value.trim(),
+    phone:   gel('student-phone').value.trim(),
+    course:  gel('student-course').value.trim(),
+    date_of_joining: gel('student-doj').value,
+  };
+  if(!body.name||!body.email||!body.phone||!body.course||!body.date_of_joining){
+    alert('Please fill all fields.'); return;
+  }
+  const url = id
+    ? "{% url 'student_edit_ajax' pk=999999 %}".replace('/999999/',`/${id}/`)
+    : "{% url 'student_add_ajax' %}";
+  postJSON(url, body).then(r=>r.json()).then(d=>{
+    if(d.success){ closeModal('modal-student'); loadStudents(); loadCounts(); }
+    else alert(d.error||'Failed to save student.');
+  }).catch(()=>alert('Network error. Try again.'));
+}
+
+function deleteStudent(pk){
+  if(!confirm('Delete this student? This cannot be undone.')) return;
+  const url="{% url 'student_delete_ajax' pk=999999 %}".replace('/999999/',`/${pk}/`);
+  postJSON(url,{}).then(r=>r.json()).then(d=>{
+    if(d.success){ gel('str-'+pk)?.remove(); loadCounts(); }
+    else alert(d.error||'Failed to delete.');
+  });
+}
+
+// ── CAROUSEL ──────────────────────────────────────────────────────
+function loadCarousel(){
+  fetch("{% url 'carousel_list_json' %}").then(r=>r.json()).then(d=>{
+    if(!d.items.length){ setHTML('grid-carousel', emptyState('No carousel images yet.')); return; }
+    setHTML('grid-carousel', d.items.map(i=>`
+      <div class="col-md-4" id="crd-${i.id}">
+        <div class="img-card">
+          <img src="${i.image_url}" alt="${i.title||'Carousel image'}" onerror="this.style.background='#f0f2f5';this.style.height='195px'">
+          <div class="img-card-body">
+            <h6>${i.title||'(No title)'}</h6>
+            <div class="act-btns">
+              <button class="btn-ed" onclick="openCarouselEdit(${i.id},'${esc(i.title)}')">Edit Title</button>
+              <button class="btn-dl" onclick="deleteCarousel(${i.id})">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join(''));
+  }).catch(()=>setHTML('grid-carousel', emptyState('Failed to load carousel images.')));
+}
+
+function openCarouselAdd(){
+  gel('carousel-modal-title').textContent='Add Carousel Image';
+  gel('carousel-id').value='';
+  gel('carousel-title').value='';
+  gel('carousel-image').value='';
+  gel('carousel-file-wrap').style.display='block';
+  openModal('modal-carousel');
+}
+
+function openCarouselEdit(id, title){
+  gel('carousel-modal-title').textContent='Edit Carousel Title';
+  gel('carousel-id').value=id;
+  gel('carousel-title').value=title;
+  gel('carousel-file-wrap').style.display='none';
+  openModal('modal-carousel');
+}
+
+function saveCarousel(){
+  const id=gel('carousel-id').value;
+  if(id){
+    // Edit title only
+    postJSON("{% url 'carousel_edit_ajax' pk=999999 %}".replace('/999999/',`/${id}/`),
+      {title: gel('carousel-title').value.trim()}
+    ).then(r=>r.json()).then(d=>{
+      if(d.success){ closeModal('modal-carousel'); loadCarousel(); }
+      else alert(d.error||'Failed.');
+    });
+  } else {
+    // Add new with image
+    const file=gel('carousel-image').files[0];
+    if(!file){ alert('Please select an image file.'); return; }
+    const fd=new FormData();
+    fd.append('title', gel('carousel-title').value.trim());
+    fd.append('image', file);
+    postForm("{% url 'carousel_add_ajax' %}", fd).then(r=>r.json()).then(d=>{
+      if(d.success){ closeModal('modal-carousel'); loadCarousel(); loadCounts(); }
+      else alert(d.error||'Failed to upload image.');
+    }).catch(()=>alert('Network error. Try again.'));
+  }
+}
+
+function deleteCarousel(pk){
+  if(!confirm('Delete this carousel image?')) return;
+  const url="{% url 'carousel_delete_ajax' pk=999999 %}".replace('/999999/',`/${pk}/`);
+  postJSON(url,{}).then(r=>r.json()).then(d=>{
+    if(d.success){ gel('crd-'+pk)?.remove(); loadCounts(); }
+    else alert(d.error||'Failed.');
+  });
+}
+
+// ── GALLERY ───────────────────────────────────────────────────────
+function loadGallery(){
+  fetch("{% url 'gallery_list_json' %}").then(r=>r.json()).then(d=>{
+    if(!d.items.length){ setHTML('grid-gallery', emptyState('No gallery images yet.')); return; }
+    setHTML('grid-gallery', d.items.map(i=>`
+      <div class="col-md-4" id="grd-${i.id}">
+        <div class="img-card">
+          <img src="${i.image_url}" alt="${i.title||'Gallery image'}" onerror="this.style.background='#f0f2f5';this.style.height='195px'">
+          <div class="img-card-body">
+            <h6>${i.title||'(No title)'}</h6>
+            <div class="act-btns">
+              <button class="btn-ed" onclick="openGalleryEdit(${i.id},'${esc(i.title)}')">Edit Title</button>
+              <button class="btn-dl" onclick="deleteGallery(${i.id})">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>`).join(''));
+  }).catch(()=>setHTML('grid-gallery', emptyState('Failed to load gallery images.')));
+}
+
+function openGalleryAdd(){
+  gel('gallery-modal-title').textContent='Add Gallery Image';
+  gel('gallery-id').value='';
+  gel('gallery-title').value='';
+  gel('gallery-image').value='';
+  gel('gallery-file-wrap').style.display='block';
+  openModal('modal-gallery');
+}
+
+function openGalleryEdit(id, title){
+  gel('gallery-modal-title').textContent='Edit Gallery Title';
+  gel('gallery-id').value=id;
+  gel('gallery-title').value=title;
+  gel('gallery-file-wrap').style.display='none';
+  openModal('modal-gallery');
+}
+
+function saveGallery(){
+  const id=gel('gallery-id').value;
+  if(id){
+    postJSON("{% url 'gallery_edit_ajax' pk=999999 %}".replace('/999999/',`/${id}/`),
+      {title: gel('gallery-title').value.trim()}
+    ).then(r=>r.json()).then(d=>{
+      if(d.success){ closeModal('modal-gallery'); loadGallery(); }
+      else alert(d.error||'Failed.');
+    });
+  } else {
+    const file=gel('gallery-image').files[0];
+    if(!file){ alert('Please select an image file.'); return; }
+    const fd=new FormData();
+    fd.append('title', gel('gallery-title').value.trim());
+    fd.append('image', file);
+    postForm("{% url 'gallery_add_ajax' %}", fd).then(r=>r.json()).then(d=>{
+      if(d.success){ closeModal('modal-gallery'); loadGallery(); loadCounts(); }
+      else alert(d.error||'Failed to upload image.');
+    }).catch(()=>alert('Network error. Try again.'));
+  }
+}
+
+function deleteGallery(pk){
+  if(!confirm('Delete this gallery image?')) return;
+  const url="{% url 'gallery_delete_ajax' pk=999999 %}".replace('/999999/',`/${pk}/`);
+  postJSON(url,{}).then(r=>r.json()).then(d=>{
+    if(d.success){ gel('grd-'+pk)?.remove(); loadCounts(); }
+    else alert(d.error||'Failed.');
+  });
+}
+
+// ── CONTACTS ──────────────────────────────────────────────────────
+function loadContacts(){
+  fetch("{% url 'contact_list_json' %}").then(r=>r.json()).then(d=>{
+    if(!d.contacts.length){
+      setHTML('tbody-contacts','<tr><td colspan="7" class="text-center py-4 text-muted">No messages found.</td></tr>');
+      return;
+    }
+    setHTML('tbody-contacts', d.contacts.map((c,i)=>`
+      <tr id="ctr-${c.id}">
+        <td>${i+1}</td>
+        <td>${c.name}</td>
+        <td>${c.email}</td>
+        <td>${c.subject}</td>
+        <td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc(c.message)}">${c.message}</td>
+        <td style="white-space:nowrap;font-size:12px">${c.created_at}</td>
+        <td><button class="btn-dl" onclick="deleteContact(${c.id})">Delete</button></td>
+      </tr>`).join(''));
+  }).catch(()=>setHTML('tbody-contacts','<tr><td colspan="7" class="text-center py-4 text-danger">Failed to load messages.</td></tr>'));
+}
+
+function deleteContact(pk){
+  if(!confirm('Delete this message?')) return;
+  const url="{% url 'contact_delete_ajax' pk=999999 %}".replace('/999999/',`/${pk}/`);
+  postJSON(url,{}).then(r=>r.json()).then(d=>{
+    if(d.success){ gel('ctr-'+pk)?.remove(); loadCounts(); }
+    else alert(d.error||'Failed.');
+  });
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  loadCounts();
+  loadStudents();
+  loadCarousel();
+  loadGallery();
+  loadContacts();
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

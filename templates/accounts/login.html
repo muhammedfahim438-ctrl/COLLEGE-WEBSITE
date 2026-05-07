@@ -12,23 +12,38 @@
             <h3 class="mb-4 text-center">Admin Login</h3>
 
             {% for message in messages %}
-                <div class="alert alert-danger">{{ message }}</div>
+                <div class="alert {% if 'success' in message.tags %}alert-success{% else %}alert-danger{% endif %}">
+                    {{ message }}
+                </div>
             {% endfor %}
 
             <form method="post">
                 {% csrf_token %}
 
-                <div class="mb-3">
-                    <label>Username</label>
-                    <input type="text" name="username" class="form-control">
-                </div>
+                {% if show_otp %}
 
-                <div class="mb-3">
-                    <label>Password</label>
-                    <input type="password" name="password" class="form-control">
-                </div>
+                    <div class="mb-3">
+                        <label>Enter OTP</label>
+                        <input type="text" name="otp" class="form-control" placeholder="6-digit OTP">
+                    </div>
 
-                <button class="btn btn-primary w-100">Login</button>
+                    <button class="btn btn-primary w-100">Verify OTP</button>
+
+                {% else %}
+
+                    <div class="mb-3">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control">
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control">
+                    </div>
+
+                    <button class="btn btn-primary w-100">Login</button>
+
+                {% endif %}
             </form>
         </div>
     </div>
