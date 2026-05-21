@@ -2,7 +2,14 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
+RAZORPAY_KEY_ID     = os.getenv('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', '')
 
 
 SECRET_KEY = 'django-insecure-college-management-project-key'
@@ -28,6 +35,7 @@ INSTALLED_APPS = [
     'gallery',
     'carousel',
     'api',
+    'admissions',
 ]
 
 
@@ -116,3 +124,4 @@ EMAIL_HOST_USER = 'muhammedfahim438@gmail.com'
 EMAIL_HOST_PASSWORD = 'pirx ejmw frzx ybdy'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+

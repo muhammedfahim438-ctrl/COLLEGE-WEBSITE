@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom'
 
-import Dashboard   from './Dashboard'
-import CarouselMgr from './CarouselMgr'
-import GalleryMgr  from './GalleryMgr'
-import StudentsMgr from './StudentsMgr'
-import ContactsMgr from './ContactsMgr'
+import Dashboard    from './Dashboard'
+import CarouselMgr  from './CarouselMgr'
+import GalleryMgr   from './GalleryMgr'
+import StudentsMgr  from './StudentsMgr'
+import ContactsMgr  from './ContactsMgr'
+import AdmissionsMgr from './AdmissionsMgr'   // ✅ FIX 1: Import added
 
 const navItems = [
-  { path:'/portal/dashboard', icon:'bi-grid-fill',     label:'Dashboard' },
-  { path:'/portal/carousel',  icon:'bi-images',        label:'Carousel'  },
-  { path:'/portal/gallery',   icon:'bi-image',         label:'Gallery'   },
-  { path:'/portal/students',  icon:'bi-people-fill',   label:'Students'  },
-  { path:'/portal/contacts',  icon:'bi-envelope-fill', label:'Contacts'  },
+  { path:'/portal/dashboard',  icon:'bi-grid-fill',        label:'Dashboard'  },
+  { path:'/portal/carousel',   icon:'bi-images',           label:'Carousel'   },
+  { path:'/portal/gallery',    icon:'bi-image',            label:'Gallery'    },
+  { path:'/portal/students',   icon:'bi-people-fill',      label:'Students'   },
+  { path:'/portal/contacts',   icon:'bi-envelope-fill',    label:'Contacts'   },
+  { path:'/portal/admissions', icon:'bi-file-earmark-text-fill', label:'Admissions' }, // ✅ FIX 2: Nav item added
 ]
 
 export default function AdminApp() {
@@ -31,8 +33,6 @@ export default function AdminApp() {
   }
 
   const goBack = () => {
-    // If on dashboard → logout and go to login
-    // If on other page → go back to dashboard
     if (location.pathname === '/portal/dashboard') {
       sessionStorage.removeItem('adminToken')
       sessionStorage.removeItem('adminUsername')
@@ -189,12 +189,13 @@ export default function AdminApp() {
         {/* Page Content */}
         <main style={{ flex:1, padding:28, overflowY:'auto', paddingBottom:90 }}>
           <Routes>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="carousel"  element={<CarouselMgr />} />
-            <Route path="gallery"   element={<GalleryMgr />} />
-            <Route path="students"  element={<StudentsMgr />} />
-            <Route path="contacts"  element={<ContactsMgr />} />
-            <Route path="*"         element={<Dashboard />} />
+            <Route path="dashboard"  element={<Dashboard />} />
+            <Route path="carousel"   element={<CarouselMgr />} />
+            <Route path="gallery"    element={<GalleryMgr />} />
+            <Route path="students"   element={<StudentsMgr />} />
+            <Route path="contacts"   element={<ContactsMgr />} />
+            <Route path="admissions" element={<AdmissionsMgr />} />  {/* ✅ FIX 3: Route added */}
+            <Route path="*"          element={<Dashboard />} />
           </Routes>
         </main>
 

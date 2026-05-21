@@ -10,6 +10,7 @@ urlpatterns = [
     path('college-admin/', include('accounts.urls')),
     path('students/', include('students.urls')),
     path('api/', include('api.urls')),
+    path('admissions/', include('admissions.urls')),
 ]
 
 if settings.DEBUG:

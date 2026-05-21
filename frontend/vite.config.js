@@ -8,6 +8,7 @@ export default defineConfig({
       '/api':       'http://localhost:8000',
       '/media':     'http://localhost:8000',
       '/college-admin': 'http://localhost:8000',
+      '/admissions':    'http://localhost:8000',
     }
   }
 })
